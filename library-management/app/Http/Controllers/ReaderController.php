@@ -2,63 +2,68 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Reader;
 use Illuminate\Http\Request;
 
 class ReaderController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
+    // Hiển thị danh sách tất cả độc giả
     public function index()
     {
-        //
+        $readers = Reader::paginate(5);;
+        return view('readers.index', compact('readers'));
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
+  
     public function create()
     {
-        //
+        return view('readers.create');
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
+   
     public function store(Request $request)
     {
-        //
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'birthday' => 'required|date',
+            'address' => 'required|string|max:255',
+            'phone' => 'required|string|max:15',
+        ]);
+
+        Reader::create($request->all());
+        return redirect()->route('readers.index')->with('success', 'Reader added successfully');
     }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(string $id)
+    
+    public function show(Reader $reader)
     {
-        //
+        return view('readers.show', compact('reader'));
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(string $id)
+   
+    public function edit(Reader $reader)
     {
-        //
+        return view('readers.edit', compact('reader'));
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, string $id)
+    
+    public function update(Request $request, Reader $reader)
     {
-        //
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'birthday' => 'required|date',
+            'address' => 'required|string|max:255',
+            'phone' => 'required|string|max:15',
+        ]);
+
+        $reader->update($request->all());
+        return redirect()->route('readers.index')->with('success', 'Reader updated successfully');
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(string $id)
+   
+    public function destroy(Reader $reader)
     {
-        //
+        $reader->delete();
+        return redirect()->route('readers.index')->with('success', 'Reader deleted successfully');
     }
 }
